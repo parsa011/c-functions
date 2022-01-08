@@ -3,6 +3,10 @@
 #include <stdbool.h>
 #include <ctype.h>
 
+#include "prosing.h"
+
+#define AR_LENGTH(a) (sizeof(a) / sizeof(a[0]))
+
 void print_help();
 
 int main(int argc,char *argv[])
@@ -15,29 +19,13 @@ int main(int argc,char *argv[])
 	fp = fopen(argv[1],"r");
 	if (!fp) {
     	printf("file not found\n");
+    	return 0;
 	}
-	bool in_newline= false,startof_line,print;
 	int c;
-	while ((c = fgetc(fp)) != -1) {
-		if (!in_newline) {
-    		do {
-				if (c == '\n')
-    				break;
-    		} while (c = fgetc(fp));
-    		in_newline = true;
-    		startof_line = true;
-    		print = false;
-    		continue;
-		}
-		if (startof_line) {
-			print = isalpha(c);
-			startof_line = false;
-		}
-		if (print)
-    		putchar(c);
-		if (c == '\n') {
-    		in_newline = print = startof_line = false;
-		}
+	ssize_t read;
+	string *str = malloc(sizeof(string));
+	while ((read = getline(&str->value, &str->len, fp)) != -1) {
+		puts(str->value);
 	}
 	fclose(fp);
 	return 1;
@@ -46,5 +34,5 @@ int main(int argc,char *argv[])
 void print_help()
 {
 	printf("c-functions help :\n");
-	printf(" c-functions filename\n");
+	printf("\t=> c-functions filename\n");
 }
